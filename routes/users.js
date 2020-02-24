@@ -45,10 +45,11 @@ router.get('/', function (req, res, next) {
 router.delete('/delete/(:id)', function (req, res, next) {
     var user = { id: req.params.id }
     console.log({ user: user });
+    console.log(req.body);
     connection.query('DELETE FROM users WHERE id = ' + req.params.id, user, function (error, result) {
         if (error) throw error;
         console.log("Record deleted: " + user);
-        //res.send(JSON.stringify(result));
+        res.redirect(303, '/users');
     });
 });
 
@@ -65,8 +66,8 @@ router.post('/add', function (req, res, next) {
     connection.query('INSERT INTO users SET ?', user, function (error, result) {
         if (error) throw error;
         console.log("User added: " + user.firstname + " " + user.lastname);
+        res.redirect('/users');
     })
-
 });
 
 
