@@ -36,15 +36,45 @@ router.get('/delete/(:id)', function (req, res, next) {
 /*GET users page. from frontend*/
 router.get('/', function (req, res, next) {
     connection.query('SELECT * FROM users ORDER BY id desc', function (error, results, fields) {
+        console.log('Get all the users');
         if (error) throw error;
         res.send(JSON.stringify(results));
+    });
+});
+
+/*GET user by id. from frontend*/
+router.get('/(:id)', function (req, res, next) {
+    var user = { id: req.params.id }
+    console.log({ 'user by id': user });
+    connection.query('SELECT * FROM users  WHERE id = ' + req.params.id, user, function (error, results, fields) {
+        if (error) throw error;
+        res.send(JSON.stringify(results));
+    });
+});
+
+/* UPDATE user. from frontend*/
+router.post('/update/(:id)', function (req, res, next) {
+    var user = {
+        id: req.params.id,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        phoneNumber: req.body.phoneNumber,
+        weekAvailable: req.body.weekAvailable
+    }
+    console.log({ 'user to update': user });
+    //console.log(req.body);
+    connection.query('UPDATE users SET ? WHERE id = ' + req.params.id, user, function (error, result) {
+        if (error) throw error;
+        console.log("Record Updated: " + user);
+        res.redirect(303, '/users');
     });
 });
 
 /* DELETE user. from frontend*/
 router.delete('/delete/(:id)', function (req, res, next) {
     var user = { id: req.params.id }
-    console.log({ user: user });
+    console.log({ 'user to delete': user });
     console.log(req.body);
     connection.query('DELETE FROM users WHERE id = ' + req.params.id, user, function (error, result) {
         if (error) throw error;
@@ -56,16 +86,16 @@ router.delete('/delete/(:id)', function (req, res, next) {
 /* ADD NEW USER POST ACTION from frontend*/
 router.post('/add', function (req, res, next) {
     var user = {
-        firstname: req.sanitize('firstname').escape().trim(),
-        lastname: req.sanitize('lastname').escape().trim(),
+        firstName: req.sanitize('firstName').escape().trim(),
+        lastName: req.sanitize('lastName').escape().trim(),
         email: req.sanitize('email').escape().trim(),
-        phonenumber: req.sanitize('phone').escape().trim(),
-        weekavailable: req.sanitize('weekavailable').escape().trim()
+        phoneNumber: req.sanitize('phoneNumber').escape().trim(),
+        weekAvailable: req.sanitize('weekAvailable').escape().trim()
     }
     console.log(req.body)
     connection.query('INSERT INTO users SET ?', user, function (error, result) {
         if (error) throw error;
-        console.log("User added: " + user.firstname + " " + user.lastname);
+        console.log("User added: " + user.firstName + " " + user.lastName);
         res.redirect('/users');
     })
 });
@@ -120,7 +150,7 @@ res.render('users/add', {
 }
 })*/
 
-// SHOW ADD USER FORM
+/* SHOW ADD USER FORM
 router.get('/add', function (req, res, next) {
     // render to views/user/add.ejs
     res.render('users/add', {
@@ -128,9 +158,9 @@ router.get('/add', function (req, res, next) {
         name: '',
         email: ''
     })
-})
+})*/
 
-// SHOW EDIT USER FORM
+/* SHOW EDIT USER FORM
 router.get('/edit/(:id)', function (req, res, next) {
 
     connection.query('SELECT * FROM users WHERE id = ' + req.params.id, function (err, rows, fields) {
@@ -153,9 +183,9 @@ router.get('/edit/(:id)', function (req, res, next) {
         }
     })
 
-})
+})*/
 
-// EDIT USER POST ACTION
+/* EDIT USER POST ACTION
 router.post('/update/:id', function (req, res, next) {
     req.assert('name', 'Name is required').notEmpty()           //Validate nam           //Validate age
     req.assert('email', 'A valid email is required').isEmail()  //Validate email
@@ -195,10 +225,7 @@ router.post('/update/:id', function (req, res, next) {
         })
         req.flash('error', error_msg)
 
-        /**
-         * Using req.body.name 
-         * because req.param('name') is deprecated
-         */
+     
         res.render('users/edit', {
             title: 'Edit User',
             id: req.params.id,
@@ -206,7 +233,7 @@ router.post('/update/:id', function (req, res, next) {
             email: req.body.email
         })
     }
-})
+})*/
 
 
 
